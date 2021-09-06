@@ -8,6 +8,7 @@ import {
     MuiPickersUtilsProvider,
     KeyboardDatePicker
 } from '@material-ui/pickers';
+import Bookings from '../Bookings/Bookings';
 
 const Book = () => {
     const [selectedDate, setSelectedDate] = useState({
@@ -28,7 +29,16 @@ const Book = () => {
     };
 
     const handleBooking = () => {
-
+        const newBookings = { ...loggedInUser, ...selectedDate };
+        fetch('http://localhost:5000/addBookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newBookings)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+            })
     }
 
     const { bedType } = useParams();
@@ -38,13 +48,13 @@ const Book = () => {
             <h1>Hello,{loggedInUser.name}!Let's book a {bedType} Room.</h1>
             <p>Want a <Link to="/home">different room?</Link> </p>
 
-            <div style={{ marginLeft: "390px" }}>
+            <div style={{ marginLeft: "490px" }}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <Grid container justifyContent="space-around">
                         <KeyboardDatePicker
                             disableToolbar
                             variant="inline"
-                            format="MM/dd/yyyy"
+                            format="dd/MM/yyyy"
                             margin="normal"
                             id="date-picker-inline"
                             label="Check In Date"
@@ -58,7 +68,7 @@ const Book = () => {
                             margin="normal"
                             id="date-picker-dialog"
                             label="Check Out Date"
-                            format="MM/dd/yyyy"
+                            format="dd/MM/yyyy"
                             value={selectedDate.checkOut}
                             onChange={handleCheckOutDate}
                             KeyboardButtonProps={{
@@ -69,6 +79,7 @@ const Book = () => {
                     <Button onClick={handleBooking} variant="contained" color="primary" style={{ marginRight: "500px" }}>Book Now</Button>
                 </MuiPickersUtilsProvider>
             </div>
+            <Bookings></Bookings>
         </div>
     );
 };
